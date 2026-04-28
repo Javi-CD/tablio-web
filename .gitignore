@@ -1,0 +1,29 @@
+# IMPORTANT: Keep this file alphanumerically sorted for future contributions.
+# pnpm-lock.yaml is versioned — do not ignore.
+
+!.env.example
+*.log
+*.swo
+*.swp
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*.local
+.env.local
+.eslintcache
+.idea/
+.tsbuildinfo
+.vercel/
+.vite/
+.vscode/
+/playwright/.cache/
+/playwright-report/
+/test-results/
+Thumbs.db
+coverage/
+dist-ssr/
+dist/
+logs/
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
