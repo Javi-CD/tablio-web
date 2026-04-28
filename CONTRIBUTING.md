@@ -6,12 +6,12 @@ This document defines the mandatory conventions for contributing to the Tablio f
 
 ## Branches
 
-| Type | Pattern | Example |
-|---|---|---|
+| Type        | Pattern          | Example                    |
+| ----------- | ---------------- | -------------------------- |
 | New feature | `feature/<name>` | `feature/public-menu-page` |
-| Bug fix | `fix/<name>` | `fix/cart-total-display` |
-| Maintenance | `chore/<name>` | `chore/update-shadcn` |
-| CI/CD | `ci/<name>` | `ci/add-playwright-step` |
+| Bug fix     | `fix/<name>`     | `fix/cart-total-display`   |
+| Maintenance | `chore/<name>`   | `chore/update-shadcn`      |
+| CI/CD       | `ci/<name>`      | `ci/add-playwright-step`   |
 
 **Mandatory flow:** `feature/*` → `develop` → `main`
 
@@ -26,16 +26,16 @@ This document defines the mandatory conventions for contributing to the Tablio f
 
 Format: `<type>: <description in present imperative>`
 
-| Type | When to use it |
-|---|---|
-| `feat` | New visible feature |
-| `fix` | Bug fix |
-| `refactor` | Change with no functional impact |
-| `test` | Add or fix tests |
-| `docs` | Documentation |
-| `chore` | Dependencies, config, maintenance |
-| `ci` | Changes in GitHub Actions |
-| `perf` | Performance improvement |
+| Type       | When to use it                    |
+| ---------- | --------------------------------- |
+| `feat`     | New visible feature               |
+| `fix`      | Bug fix                           |
+| `refactor` | Change with no functional impact  |
+| `test`     | Add or fix tests                  |
+| `docs`     | Documentation                     |
+| `chore`    | Dependencies, config, maintenance |
+| `ci`       | Changes in GitHub Actions         |
+| `perf`     | Performance improvement           |
 
 **Valid examples:**
 
