@@ -6,7 +6,7 @@ import { t } from '@/locales/es'
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
-// const SettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
+const SettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
 
 function Loading() {
   return (
@@ -34,7 +34,7 @@ export function AppRouter() {
               </PrivateRoute>
             }
           />
-          {/* 
+
           <Route
             path="/admin/settings"
             element={
@@ -43,7 +43,6 @@ export function AppRouter() {
               </PrivateRoute>
             }
           />
-          */}
 
           {/* Phase 3: categories, products */}
           {/* Phase 4: /menu/:slug */}
