@@ -31,7 +31,7 @@ describe('useAuth', () => {
     vi.mocked(useQuery).mockReturnValue({
       data: undefined,
       isLoading: false,
-    } as UseQueryResult<User | null, Error>)
+    } as unknown as UseQueryResult<User | null, Error>)
 
     const { result } = renderHook(() => useAuth())
 
@@ -44,7 +44,7 @@ describe('useAuth', () => {
     vi.mocked(useQuery).mockReturnValue({
       data: mockUser,
       isLoading: false,
-    } as UseQueryResult<User | null, Error>)
+    } as unknown as UseQueryResult<User | null, Error>)
 
     const { result } = renderHook(() => useAuth())
 
@@ -56,7 +56,7 @@ describe('useAuth', () => {
     vi.mocked(useQuery).mockReturnValue({
       data: { id: '1', email: 'test@tablio.co', full_name: 'Test' },
       isLoading: false,
-    } as UseQueryResult<User | null, Error>)
+    } as unknown as UseQueryResult<User | null, Error>)
 
     const { result } = renderHook(() => useAuth())
 
