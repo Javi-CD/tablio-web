@@ -10,6 +10,7 @@ const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const SettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
 const CategoriesPage = lazy(() => import('@/pages/admin/CategoriesPage'))
 const ProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
+const PublicMenuPage = lazy(() => import('@/pages/public-menu/PublicMenuPage'))
 
 function Loading() {
   return (
@@ -78,7 +79,9 @@ export function AppRouter() {
             }
           />
 
-          {/* Phase 4: /menu/:slug */}
+          {/* Public menu — no auth */}
+          <Route path="/menu/:slug" element={<PublicMenuPage />} />
+
           {/* Phase 5: /admin/orders */}
 
           {/* Fallback */}

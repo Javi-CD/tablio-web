@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 
+import { CartProvider } from '@/store/cart'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -15,5 +17,9 @@ interface ProvidersProps {
 }
 
 export function Providers({ children }: ProvidersProps) {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CartProvider>{children}</CartProvider>
+    </QueryClientProvider>
+  )
 }
