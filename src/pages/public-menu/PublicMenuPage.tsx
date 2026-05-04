@@ -1,7 +1,9 @@
-import { Minus, Plus, ShoppingCart, X } from 'lucide-react'
-import { type FC, useEffect, useRef, useState } from 'react'
+import { CheckCircle, ChevronLeft, Minus, Plus, ShoppingCart, X } from 'lucide-react'
+import { type ChangeEvent, type FC, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { useCreateOrder } from '@/features/orders/hooks'
+import type { OrderType } from '@/features/orders/types'
 import { usePublicMenu } from '@/features/public-menu/hooks'
 import type { PublicCategory, PublicProduct } from '@/features/public-menu/types'
 import { t } from '@/locales/es'
@@ -246,16 +248,273 @@ function CartFab({ itemCount, total, onClick }: CartFabProps) {
 
 // ─── Cart Drawer ──────────────────────────────────────────────────────────────
 
+type DrawerStep = 'cart' | 'checkout' | 'confirmed'
+
 interface CartDrawerProps {
   open: boolean
   onClose: () => void
+  slug: string
 }
 
-function CartDrawer({ open, onClose }: CartDrawerProps) {
+function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
   const { items, total, setQuantity, clear } = useCart()
+  const createOrderMut = useCreateOrder(slug)
+
+  const [step, setStep] = useState<DrawerStep>('cart')
+  const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const [notes, setNotes] = useState('')
+  const [orderType, setOrderType] = useState<OrderType>('table')
+  const [tableNum, setTableNum] = useState('')
+  const [nameError, setNameError] = useState('')
+  const [tableError, setTableError] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [confirmedId, setConfirmedId] = useState('')
+
+  useEffect(() => {
+    if (open) {
+      setStep('cart')
+      setNameError('')
+      setTableError('')
+      setSubmitError('')
+    }
+  }, [open])
 
   if (!open) return null
 
+  const handleSubmit = async () => {
+    setNameError('')
+    setTableError('')
+    setSubmitError('')
+
+    let valid = true
+    if (!customerName.trim()) {
+      setNameError(t.checkout.nameRequired)
+      valid = false
+    }
+    if (orderType === 'table' && !tableNum.trim()) {
+      setTableError(t.checkout.tableRequired)
+      valid = false
+    }
+    if (!valid) return
+
+    try {
+      const order = await createOrderMut.mutateAsync({
+        customer_name: customerName.trim(),
+        customer_phone: customerPhone.trim() || null,
+        customer_notes: notes.trim() || null,
+        order_type: orderType,
+        table_number: orderType === 'table' ? tableNum.trim() : null,
+        items: items.map((i) => ({ product_id: i.productId, quantity: i.quantity })),
+      })
+      setConfirmedId(order.id)
+      clear()
+      setStep('confirmed')
+    } catch {
+      setSubmitError(t.checkout.submitError)
+    }
+  }
+
+  // ── Step: confirmed ────────────────────────────────────────────────────────
+  if (step === 'confirmed') {
+    return (
+      <div
+        className="fixed inset-0 z-30 flex flex-col justify-end"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.checkout.confirmationTitle}
+      >
+        <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+        <div className="relative max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-card shadow-2xl">
+          <div className="flex flex-col items-center px-6 py-12 text-center">
+            <CheckCircle className="mb-4 h-14 w-14 text-green-500" aria-hidden />
+            <h2 className="text-xl font-bold text-foreground">{t.checkout.confirmationTitle}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{t.checkout.confirmationMessage}</p>
+            <div className="mt-5 rounded-xl bg-muted px-6 py-4">
+              <p className="text-xs text-muted-foreground">{t.checkout.confirmationOrderCode}</p>
+              <p className="mt-1 text-2xl font-bold tracking-widest text-foreground">
+                #{confirmedId.slice(0, 8).toUpperCase()}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="mt-8 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
+            >
+              {t.checkout.closeButton}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Step: checkout ─────────────────────────────────────────────────────────
+  if (step === 'checkout') {
+    return (
+      <div
+        className="fixed inset-0 z-30 flex flex-col justify-end"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.checkout.title}
+      >
+        <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+        <div className="relative max-h-[92dvh] overflow-y-auto rounded-t-2xl bg-card shadow-2xl">
+          {/* Header */}
+          <div className="sticky top-0 flex items-center gap-3 border-b border-border bg-card px-4 py-4">
+            <button
+              onClick={() => setStep('cart')}
+              aria-label={t.checkout.backButton}
+              className="rounded-lg p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <h2 className="text-base font-semibold text-foreground">{t.checkout.title}</h2>
+          </div>
+
+          <div className="space-y-4 px-4 py-4">
+            {/* Customer name */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground" htmlFor="co-name">
+                {t.checkout.customerNameLabel}
+              </label>
+              <input
+                id="co-name"
+                type="text"
+                value={customerName}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerName(e.target.value)}
+                placeholder={t.checkout.customerNamePlaceholder}
+                autoComplete="name"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              {nameError && <p className="mt-1 text-xs text-destructive">{nameError}</p>}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground" htmlFor="co-phone">
+                {t.checkout.customerPhoneLabel}
+              </label>
+              <input
+                id="co-phone"
+                type="tel"
+                value={customerPhone}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerPhone(e.target.value)}
+                placeholder={t.checkout.customerPhonePlaceholder}
+                autoComplete="tel"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+
+            {/* Order type */}
+            <div>
+              <p className="mb-2 text-sm font-medium text-foreground">
+                {t.checkout.orderTypeLabel}
+              </p>
+              <div className="flex gap-2">
+                {[
+                  { value: 'table' as OrderType, label: t.checkout.orderTypeTable },
+                  { value: 'pickup' as OrderType, label: t.checkout.orderTypePickup },
+                  { value: 'delivery' as OrderType, label: t.checkout.orderTypeDelivery },
+                ].map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setOrderType(value)}
+                    className={[
+                      'flex-1 rounded-lg border py-2 text-xs font-semibold transition-colors',
+                      orderType === value
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-input bg-background text-foreground hover:bg-accent',
+                    ].join(' ')}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table number */}
+            {orderType === 'table' && (
+              <div>
+                <label
+                  className="mb-1 block text-sm font-medium text-foreground"
+                  htmlFor="co-table"
+                >
+                  {t.checkout.tableNumberLabel}
+                </label>
+                <input
+                  id="co-table"
+                  type="text"
+                  inputMode="numeric"
+                  value={tableNum}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setTableNum(e.target.value)}
+                  placeholder={t.checkout.tableNumberPlaceholder}
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                {tableError && <p className="mt-1 text-xs text-destructive">{tableError}</p>}
+              </div>
+            )}
+
+            {/* Notes */}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-foreground" htmlFor="co-notes">
+                {t.checkout.notesLabel}
+              </label>
+              <textarea
+                id="co-notes"
+                value={notes}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+                placeholder={t.checkout.notesPlaceholder}
+                rows={3}
+                className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+
+            {/* Order summary */}
+            <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+              <ul className="divide-y divide-border">
+                {items.map((item) => (
+                  <li key={item.productId} className="flex items-center justify-between py-2">
+                    <span className="text-sm text-foreground">
+                      <span className="font-semibold">{item.quantity}×</span> {item.name}
+                    </span>
+                    <span className="text-sm font-medium text-foreground">
+                      {formatCurrency(Number(item.price) * item.quantity)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
+                <span className="text-sm font-semibold text-foreground">{t.menu.total}</span>
+                <span className="text-base font-bold text-foreground">{formatCurrency(total)}</span>
+              </div>
+            </div>
+
+            {submitError && (
+              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                {submitError}
+              </p>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="sticky bottom-0 border-t border-border bg-card px-4 py-4">
+            <button
+              onClick={() => {
+                void handleSubmit()
+              }}
+              disabled={createOrderMut.isPending}
+              className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              {createOrderMut.isPending ? t.checkout.submitting : t.checkout.submitButton}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Step: cart ─────────────────────────────────────────────────────────────
   return (
     <div
       className="fixed inset-0 z-30 flex flex-col justify-end"
@@ -344,8 +603,8 @@ function CartDrawer({ open, onClose }: CartDrawerProps) {
                 {t.menu.clearCart}
               </button>
               <button
+                onClick={() => setStep('checkout')}
                 className="w-full rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
-                onClick={onClose}
               >
                 {t.menu.checkout}
               </button>
@@ -413,7 +672,7 @@ const PublicMenuPage: FC = () => {
         <CartFab itemCount={itemCount} total={total} onClick={() => setCartOpen(true)} />
       )}
 
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} slug={slug ?? ''} />
     </div>
   )
 }
