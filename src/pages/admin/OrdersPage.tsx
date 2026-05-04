@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { type FC, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 
 import OrderStatusBadge from '@/components/orders/OrderStatusBadge'
 import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks'
@@ -48,7 +48,7 @@ function OrderTypeBadge({ type, tableNumber }: OrderTypeBadgeProps) {
   const label =
     type === 'table' && tableNumber ? `${t.order.tableNumber} ${tableNumber}` : TYPE_LABELS[type]
   return (
-    <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+    <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
       {label}
     </span>
   )
@@ -207,6 +207,16 @@ const OrdersPage: FC = () => {
     },
   })
 
+  // Listen for custom event to facilitate A11y/E2E testing
+  useEffect(() => {
+    const handler = () => {
+      setHasNewOrder(true)
+      playNotificationSound()
+    }
+    window.addEventListener('tablio:new_order', handler)
+    return () => window.removeEventListener('tablio:new_order', handler)
+  }, [])
+
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
     updateStatus.mutate({ orderId, data: { status: newStatus } })
   }
@@ -231,7 +241,7 @@ const OrdersPage: FC = () => {
           role="alert"
           className="flex items-center justify-between rounded-xl border border-amber-300 bg-amber-50 px-4 py-3"
         >
-          <p className="flex min-w-0 items-center gap-2 text-sm font-semibold text-amber-800">
+          <p className="flex min-w-0 items-center gap-2 text-sm font-semibold text-amber-900">
             <span aria-hidden="true" className="flex-shrink-0">
               🔔
             </span>
@@ -239,7 +249,7 @@ const OrdersPage: FC = () => {
           </p>
           <button
             onClick={() => setHasNewOrder(false)}
-            className="ml-3 flex-shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-amber-800 hover:bg-amber-100"
+            className="ml-3 flex-shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100"
           >
             {t.order.newOrderAck}
           </button>

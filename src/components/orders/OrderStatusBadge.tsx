@@ -9,7 +9,7 @@ interface Props {
 const CONFIG: Record<OrderStatus, { label: string; className: string }> = {
   pending: {
     label: 'Pendiente',
-    className: 'bg-yellow-100 text-yellow-800',
+    className: 'bg-yellow-100 text-yellow-900',
   },
   accepted: {
     label: 'Aceptado',

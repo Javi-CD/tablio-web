@@ -384,9 +384,19 @@ function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerName(e.target.value)}
                 placeholder={t.checkout.customerNamePlaceholder}
                 autoComplete="name"
+                aria-invalid={!!nameError}
+                aria-describedby={nameError ? 'co-name-error' : undefined}
                 className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              {nameError && <p className="mt-1 text-xs text-destructive">{nameError}</p>}
+              {nameError && (
+                <p
+                  id="co-name-error"
+                  role="alert"
+                  className="mt-1 text-xs font-medium text-red-700"
+                >
+                  {nameError}
+                </p>
+              )}
             </div>
 
             {/* Phone */}
@@ -420,6 +430,7 @@ function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
                     key={value}
                     type="button"
                     onClick={() => setOrderType(value)}
+                    aria-pressed={orderType === value}
                     className={[
                       'flex-1 rounded-lg border py-2 text-xs font-semibold transition-colors',
                       orderType === value
@@ -449,9 +460,19 @@ function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
                   value={tableNum}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => setTableNum(e.target.value)}
                   placeholder={t.checkout.tableNumberPlaceholder}
+                  aria-invalid={!!tableError}
+                  aria-describedby={tableError ? 'co-table-error' : undefined}
                   className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
-                {tableError && <p className="mt-1 text-xs text-destructive">{tableError}</p>}
+                {tableError && (
+                  <p
+                    id="co-table-error"
+                    role="alert"
+                    className="mt-1 text-xs font-medium text-red-700"
+                  >
+                    {tableError}
+                  </p>
+                )}
               </div>
             )}
 
@@ -491,7 +512,10 @@ function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
             </div>
 
             {submitError && (
-              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              <p
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-800"
+              >
                 {submitError}
               </p>
             )}
