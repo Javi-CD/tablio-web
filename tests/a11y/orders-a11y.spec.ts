@@ -284,7 +284,7 @@ test.describe('A11y — Panel de pedidos (admin)', () => {
 
   test('badge de estado tiene contraste de color suficiente', async ({ page }) => {
     await page.goto('/admin/orders')
-    await expect(page.getByText(/pendiente/i)).toBeVisible()
+    await expect(page.getByRole('article').getByText(/pendiente/i)).toBeVisible()
 
     // El análisis de color-contrast está incluido en wcag2aa
     const results = await new AxeBuilder({ page })

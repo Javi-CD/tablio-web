@@ -270,8 +270,8 @@ test.describe('Panel de pedidos — administrador', () => {
     await page.goto('/admin/orders')
 
     await expect(page.getByRole('heading', { name: /pedidos/i })).toBeVisible()
-    await expect(page.getByText('Juan Pérez')).toBeVisible()
-    await expect(page.getByText(/pendiente/i)).toBeVisible()
+    const orderCard = page.getByRole('article').filter({ hasText: 'Juan Pérez' })
+    await expect(orderCard.getByText(/pendiente/i)).toBeVisible()
   })
 
   test('muestra botones de acción según el estado del pedido', async ({ page }) => {
