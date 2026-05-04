@@ -121,7 +121,7 @@ function OrderCard({ order, onStatusChange, isUpdating }: OrderCardProps) {
               className={[
                 'w-full rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 sm:w-auto sm:py-1.5 sm:text-xs',
                 status === 'cancelled'
-                  ? 'border border-destructive text-destructive hover:bg-destructive/10'
+                  ? 'border border-red-200 text-red-700 hover:bg-red-50'
                   : 'bg-primary text-primary-foreground hover:opacity-90',
               ].join(' ')}
             >

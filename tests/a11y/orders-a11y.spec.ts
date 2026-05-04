@@ -263,15 +263,14 @@ test.describe('A11y — Panel de pedidos (admin)', () => {
   })
 
   test('banner de nuevo pedido tiene rol alert y es accesible', async ({ page }) => {
-    // Mockear la respuesta de órdenes que dispara el banner
     await page.goto('/admin/orders')
 
-    // Inyectar el estado hasNewOrder directamente para verificar accesibilidad del banner
-    // En producción lo dispara el WebSocket; aquí verificamos el componente en su estado visible
+    // Esperar a que el componente esté montado
+    await expect(page.getByRole('heading', { name: /pedidos/i })).toBeVisible()
+
+    // Inyectar un evento para mostrar el banner
     await page.evaluate(() => {
-      // Disparar evento personalizado que simula el trigger de WS (solo prueba de estructura)
-      const btn = document.querySelector('[aria-label="Filtrar pedidos por estado"]')
-      if (btn) btn.dispatchEvent(new Event('focus'))
+      window.dispatchEvent(new CustomEvent('tablio:new_order'))
     })
 
     // Verificar que la estructura de accesibilidad de la página es válida
