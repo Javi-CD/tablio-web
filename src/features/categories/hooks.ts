@@ -1,4 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
+import { getAxiosErrorMessage } from '@/locales/errors'
+import { t } from '@/locales/es'
 
 import { createCategory, deleteCategory, listCategories, updateCategory } from './api'
 import type { CategoryCreate, CategoryUpdate } from './types'
@@ -17,6 +21,10 @@ export function useCreateCategory(restaurantId: string) {
     mutationFn: (data: CategoryCreate) => createCategory(restaurantId, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories', restaurantId] })
+      toast.success(t.toast.categoryCreated)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }
@@ -27,6 +35,10 @@ export function useUpdateCategory(restaurantId: string) {
     mutationFn: ({ id, data }: { id: string; data: CategoryUpdate }) => updateCategory(id, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories', restaurantId] })
+      toast.success(t.toast.categoryUpdated)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }
@@ -37,6 +49,10 @@ export function useDeleteCategory(restaurantId: string) {
     mutationFn: (categoryId: string) => deleteCategory(categoryId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories', restaurantId] })
+      toast.success(t.toast.categoryDeleted)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }

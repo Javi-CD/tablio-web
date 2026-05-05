@@ -1,4 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
+import { getAxiosErrorMessage } from '@/locales/errors'
+import { t } from '@/locales/es'
 
 import { createProduct, deleteProduct, listProducts, updateProduct } from './api'
 import type { ProductCreate, ProductUpdate } from './types'
@@ -17,6 +21,10 @@ export function useCreateProduct(restaurantId: string) {
     mutationFn: (data: ProductCreate) => createProduct(restaurantId, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products', restaurantId] })
+      toast.success(t.toast.productCreated)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }
@@ -27,6 +35,10 @@ export function useUpdateProduct(restaurantId: string) {
     mutationFn: ({ id, data }: { id: string; data: ProductUpdate }) => updateProduct(id, data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products', restaurantId] })
+      toast.success(t.toast.productUpdated)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }
@@ -37,6 +49,10 @@ export function useDeleteProduct(restaurantId: string) {
     mutationFn: (productId: string) => deleteProduct(productId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products', restaurantId] })
+      toast.success(t.toast.productDeleted)
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error, t.toast.errorGeneric))
     },
   })
 }
