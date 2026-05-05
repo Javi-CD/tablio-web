@@ -3,6 +3,7 @@ import { type FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Skeleton } from '@/components/ui/Skeleton'
 import {
   useMyRestaurant,
   useCreateRestaurant,
@@ -94,8 +95,14 @@ const SettingsPage: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <p className="text-sm text-muted-foreground">{t.common.loading}</p>
+      <div className="flex w-full flex-col gap-4">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-64" />
+        <div className="mt-2 flex flex-col gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-10 w-full rounded-lg" />
+          ))}
+        </div>
       </div>
     )
   }

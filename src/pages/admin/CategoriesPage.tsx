@@ -4,6 +4,7 @@ import { type FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Skeleton } from '@/components/ui/Skeleton'
 import {
   useCategories,
   useCreateCategory,
@@ -308,7 +309,13 @@ const CategoriesPage: FC = () => {
         </p>
       )}
 
-      {isLoading && <p className="text-sm text-muted-foreground">{t.common.loading}</p>}
+      {isLoading && (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-14 w-full rounded-xl" />
+          ))}
+        </div>
+      )}
 
       {!isLoading && categories && categories.length === 0 && (
         <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">

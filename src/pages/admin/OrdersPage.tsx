@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { type FC, useEffect, useState } from 'react'
 
 import OrderStatusBadge from '@/components/orders/OrderStatusBadge'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks'
 import type { Order, OrderStatus, OrderType } from '@/features/orders/types'
 import { useMyRestaurant } from '@/features/restaurants/hooks'
@@ -294,7 +295,11 @@ const OrdersPage: FC = () => {
 
       {/* Orders list */}
       {isLoading ? (
-        <p className="py-10 text-center text-sm text-muted-foreground">{t.order.loadingOrders}</p>
+        <div className="flex flex-col gap-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-36 w-full rounded-xl" />
+          ))}
+        </div>
       ) : isError ? (
         <p className="py-10 text-center text-sm text-destructive">{t.order.errorLoading}</p>
       ) : !data?.items.length ? (
