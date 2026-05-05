@@ -1,4 +1,4 @@
-import { LayoutDashboard, List, LogOut, Package, Settings, ShoppingBag } from 'lucide-react'
+import { LayoutDashboard, List, LogOut, Package, QrCode, Settings, ShoppingBag } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { label: t.nav.categories, href: '/admin/categories', icon: List },
   { label: t.nav.products, href: '/admin/products', icon: Package },
   { label: t.nav.orders, href: '/admin/orders', icon: ShoppingBag },
+  { label: t.nav.qr, href: '/admin/qr', icon: QrCode },
   { label: t.nav.settings, href: '/admin/settings', icon: Settings },
 ]
 
