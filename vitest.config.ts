@@ -29,6 +29,8 @@ export default defineConfig({
         'src/App.tsx',
         'src/services/api.ts',
         'src/hooks/useWebSocket.ts',
+        'src/pages/LandingPage.tsx',
+        'src/pages/NotFoundPage.tsx',
       ],
       thresholds: { lines: 70 },
     },

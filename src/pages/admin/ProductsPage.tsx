@@ -4,6 +4,7 @@ import { type FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Skeleton } from '@/components/ui/Skeleton'
 import { useCategories } from '@/features/categories/hooks'
 import {
   useCreateProduct,
@@ -386,7 +387,13 @@ const ProductsPage: FC = () => {
         </p>
       )}
 
-      {isLoading && <p className="text-sm text-muted-foreground">{t.common.loading}</p>}
+      {isLoading && (
+        <div className="space-y-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-xl" />
+          ))}
+        </div>
+      )}
 
       {!isLoading && products && products.length === 0 && (
         <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">

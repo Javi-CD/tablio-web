@@ -576,6 +576,7 @@ function CartDrawer({ open, onClose, slug }: CartDrawerProps) {
                       src={item.image_url}
                       alt={item.name}
                       className="h-12 w-12 flex-shrink-0 rounded-lg object-cover"
+                      loading="lazy"
                     />
                   )}
                   <div className="min-w-0 flex-1">

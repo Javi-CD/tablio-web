@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
+import { Toaster } from 'sonner'
 
 import { CartProvider } from '@/store/cart'
 
@@ -20,6 +21,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>{children}</CartProvider>
+      <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
   )
 }
