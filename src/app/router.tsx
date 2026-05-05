@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import AdminLayout from '@/components/layout/AdminLayout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
@@ -7,11 +7,15 @@ import { t } from '@/locales/es'
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
+const DashboardPage = lazy(() => import('@/pages/admin/DashboardPage'))
 const SettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
 const CategoriesPage = lazy(() => import('@/pages/admin/CategoriesPage'))
 const ProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
 const OrdersPage = lazy(() => import('@/pages/admin/OrdersPage'))
+const QRPage = lazy(() => import('@/pages/admin/QRPage'))
 const PublicMenuPage = lazy(() => import('@/pages/public-menu/PublicMenuPage'))
+const LandingPage = lazy(() => import('@/pages/LandingPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function Loading() {
   return (
@@ -34,6 +38,9 @@ export function AppRouter() {
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <Routes>
+          {/* Landing */}
+          <Route path="/" element={<LandingPage />} />
+
           {/* Public auth routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -43,12 +50,7 @@ export function AppRouter() {
             path="/admin"
             element={
               <AdminRoute>
-                <div className="flex flex-col items-start gap-2">
-                  <h1 className="text-xl font-bold text-foreground">Panel de administración</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Bienvenido a Tablio. Gestiona tu menú desde el menú lateral.
-                  </p>
-                </div>
+                <DashboardPage />
               </AdminRoute>
             }
           />
@@ -89,11 +91,20 @@ export function AppRouter() {
             }
           />
 
+          <Route
+            path="/admin/qr"
+            element={
+              <AdminRoute>
+                <QRPage />
+              </AdminRoute>
+            }
+          />
+
           {/* Public menu — no auth */}
           <Route path="/menu/:slug" element={<PublicMenuPage />} />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          {/* 404 */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
