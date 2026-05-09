@@ -5,9 +5,9 @@ permissions:
   pull-requests: read
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   quality:
@@ -22,8 +22,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,8 +50,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -72,8 +72,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
